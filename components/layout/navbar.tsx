@@ -8,11 +8,12 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
   { name: "Bosh sahifa", href: "/" },
-  { name: "Xizmatlar", href: "#services" },
-  { name: "Narxlar", href: "#pricing" },
-  { name: "Portfolio", href: "#portfolio" },
-  { name: "FAQ", href: "#faq" },
-  { name: "Aloqa", href: "#contact" },
+  { name: "Xizmatlar", href: "/#services" },
+  { name: "Narxlar", href: "/#pricing" },
+  { name: "Portfolio", href: "/#portfolio" },
+  { name: "Blog", href: "/blog" },
+  { name: "FAQ", href: "/#faq" },
+  { name: "Aloqa", href: "/#contact" },
 ];
 
 interface NavbarProps {

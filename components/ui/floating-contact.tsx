@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MessageCircle, Send, Bot } from "lucide-react";
+import { MessageCircle, Send, Bot, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -48,11 +48,25 @@ export default function FloatingContact() {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="fixed bottom-24 left-8 z-50 w-96 h-[500px] bg-gray-900 rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
+          className="fixed bottom-24 left-8 z-50 w-96 h-[500px] bg-gray-900 rounded-2xl shadow-2xl border border-white/10 overflow-hidden flex flex-col"
         >
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-white/10">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-sm font-medium text-white">EvolvoAI Assistant</span>
+            </div>
+            <button
+              onClick={() => setShowChatbot(false)}
+              className="p-1 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
           <iframe
             src="/chatbot"
-            className="w-full h-full"
+            className="w-full flex-1"
             title="EvolvoAI Chatbot"
           />
         </motion.div>

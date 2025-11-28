@@ -19,14 +19,61 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   // Fetch featured projects for homepage
-  const projects = await prisma.project.findMany({
-    where: {
-      status: "COMPLETED",
-      featured: true,
-    },
-    orderBy: { createdAt: "desc" },
-    take: 4,
-  });
+  let projects = [];
+  
+  try {
+    projects = await prisma.project.findMany({
+      where: {
+        status: "COMPLETED",
+        featured: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    });
+  } catch (error) {
+    console.error("Failed to fetch projects (Database might be offline):", error);
+    // Fallback to mock data
+    projects = [
+      {
+        id: "1",
+        title: "E-Commerce Platform",
+        slug: "e-commerce-platform",
+        description: "To'liq funksional onlayn do'kon platformasi",
+        category: "Web Development",
+        tags: ["Next.js", "Stripe", "PostgreSQL"],
+        imageUrl: "https://images.unsplash.com/photo-1557821552-17105176677c?w=800",
+        demoUrl: "#",
+        githubUrl: "#",
+        technologies: ["React", "Node.js", "Prisma"],
+        clientName: "Retail Co",
+        completedAt: new Date(),
+        featured: true,
+        status: "COMPLETED",
+        views: 150,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "2",
+        title: "AI Chatbot Integration",
+        slug: "ai-chatbot",
+        description: "Mijozlarni qo'llab-quvvatlash uchun aqlli chatbot",
+        category: "AI",
+        tags: ["OpenAI", "Python", "FastAPI"],
+        imageUrl: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800",
+        demoUrl: "#",
+        githubUrl: "#",
+        technologies: ["GPT-4", "LangChain"],
+        clientName: "Tech Corp",
+        completedAt: new Date(),
+        featured: true,
+        status: "COMPLETED",
+        views: 200,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ] as any;
+  }
 
   return (
     <main className="min-h-screen">

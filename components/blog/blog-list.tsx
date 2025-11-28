@@ -178,7 +178,7 @@ export default function BlogList() {
                             <div className="flex items-center space-x-1">
                               <Calendar className="w-4 h-4" />
                               <span>
-                                {new Date(post.publishDate).toLocaleDateString("uz-UZ")}
+                                {new Date(post.publishDate).toISOString().split('T')[0].split('-').reverse().join('/')}
                               </span>
                             </div>
                             <div className="flex items-center space-x-1">

@@ -76,11 +76,7 @@ export default function BlogPostContent({ post }: BlogPostContentProps) {
               <div className="flex items-center space-x-2">
                 <Calendar className="w-4 h-4" />
                 <span>
-                  {new Date(post.publishDate).toLocaleDateString("uz-UZ", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {new Date(post.publishDate).toISOString().split('T')[0].split('-').reverse().join('/')}
                 </span>
               </div>
               <div className="flex items-center space-x-2">

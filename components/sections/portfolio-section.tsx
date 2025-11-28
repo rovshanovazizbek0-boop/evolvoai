@@ -23,7 +23,7 @@ interface PortfolioSectionProps {
 
 export default function PortfolioSection({ projects }: PortfolioSectionProps) {
   return (
-    <section className="py-32 px-6 relative overflow-hidden">
+    <section id="portfolio" className="py-32 px-6 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E27] via-[#1A1F3A] to-[#0A0E27]" />
       

@@ -137,7 +137,7 @@ export default function BlogPreviewSection() {
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
-                          <span>{new Date(post.publishDate).toLocaleDateString("uz-UZ")}</span>
+                          <span>{post.publishDate.split('-').reverse().join('/')}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           <Clock className="w-4 h-4" />

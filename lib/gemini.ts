@@ -31,7 +31,7 @@ export interface GeneratedContent {
 }
 
 export async function generateBlogPost(category: string): Promise<GeneratedContent> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const prompt = `Sen professional ${category} bo'yicha kontent yozuvchisan. 
 O'zbek auditoriyasi uchun qiziqarli, amaliy va SEO-optimallashtirilgan blog post yarat. 
