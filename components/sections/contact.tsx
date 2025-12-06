@@ -259,14 +259,14 @@ export default function ContactSection() {
                     <MessageCircle className="w-6 h-6 text-emerald-400" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-1">Telegram</h4>
+                    <h4 className="text-white font-semibold mb-1">Telegram Kanal</h4>
                     <a
-                      href="https://t.me/evolvoai"
+                      href="https://t.me/evolvoaichannel"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary-400 hover:text-primary-300 transition-colors"
                     >
-                      @evolvoai
+                      @evolvoaichannel
                     </a>
                   </div>
                 </div>

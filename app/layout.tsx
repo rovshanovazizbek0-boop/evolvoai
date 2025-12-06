@@ -62,7 +62,7 @@ export default function RootLayout({
       availableLanguage: ["uz", "ru", "en"],
     },
     sameAs: [
-      "https://t.me/evolvoai",
+      "https://t.me/evolvoaichannel",
       "https://instagram.com/evolvoai",
     ],
   };

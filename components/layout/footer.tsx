@@ -25,9 +25,8 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { name: "Telegram", href: "https://t.me/evolvoai", icon: Send },
-  { name: "Instagram", href: "#", icon: "instagram" },
-  { name: "LinkedIn", href: "#", icon: "linkedin" },
+  { name: "Telegram Kanal", href: "https://t.me/evolvoaichannel", icon: Send },
+  { name: "Telegram Bot", href: "https://t.me/evolvoai_bot", icon: Send },
 ];
 
 export default function Footer() {
