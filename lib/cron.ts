@@ -2,12 +2,12 @@ import cron from "node-cron";
 import { categories } from "./gemini";
 
 export function setupCronJobs() {
-  // Daily content generation at 08:00 UTC+5
-  cron.schedule("0 8 * * *", async () => {
-    console.log("Running daily blog post generation...");
+  // HOURLY content generation - every hour at minute 0
+  cron.schedule("0 * * * *", async () => {
+    console.log("🚀 Running hourly blog post generation...");
     
     try {
-      // Select random category for daily post
+      // Select random category for hourly post
       const randomCategory = categories[Math.floor(Math.random() * categories.length)];
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/generate`, {
@@ -20,30 +20,38 @@ export function setupCronJobs() {
       });
 
       const result = await response.json();
-      console.log("Daily post generated:", result);
+      console.log(`✅ Hourly post generated [${randomCategory}]:`, result.title || result);
     } catch (error) {
-      console.error("Error in daily cron job:", error);
+      console.error("❌ Error in hourly cron job:", error);
     }
   });
 
-  // Weekly batch generation on Sundays at 10:00 UTC+5
-  cron.schedule("0 10 * * 0", async () => {
-    console.log("Running weekly batch generation...");
+  // Additional: Every 3 hours - Trend post (from Google Search)
+  cron.schedule("30 */3 * * *", async () => {
+    console.log("🔥 Running trend post generation...");
     
     try {
+      const trendCategories = ["biznes", "texnologiya", "AI", "startaplar"];
+      const randomTrend = trendCategories[Math.floor(Math.random() * trendCategories.length)];
+      
+      // This would call the trend generation API if we add one
+      // For now, using regular generation with trend-focused prompt
       const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/generate`, {
-        method: "GET",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Authorization": `Bearer ${process.env.CRON_SECRET}`,
         },
+        body: JSON.stringify({ category: randomTrend, type: "trend" }),
       });
 
       const result = await response.json();
-      console.log("Weekly batch completed:", result);
+      console.log(`🔥 Trend post generated [${randomTrend}]:`, result.title || result);
     } catch (error) {
-      console.error("Error in weekly cron job:", error);
+      console.error("❌ Error in trend cron job:", error);
     }
   });
 
-  console.log("Cron jobs configured successfully");
+  console.log("⏰ Cron jobs configured: Hourly posts + 3-hourly trends");
 }
+
