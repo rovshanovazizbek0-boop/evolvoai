@@ -420,18 +420,18 @@ export function setupBotCommands(): void {
 
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-ysus.onrender.com";
 
-      const results = posts.map((post) => 
-        InlineQueryResultBuilder.article(post.id, post.title, {
-          description: post.excerpt.substring(0, 100) + "...",
-          thumbnail_url: post.imageUrl || undefined,
-        }).text(
+      const results = posts.map((post) => {
+        const messageText = 
           `${getCategoryEmoji(post.category)} <b>${post.title}</b>\n\n` +
           `${post.excerpt}\n\n` +
           `🔗 <a href="${baseUrl}/blog/${post.slug}">To'liq o'qish</a>\n\n` +
-          `#${post.category} #EvolvoAI`,
-          { parse_mode: "HTML" }
-        )
-      );
+          `#${post.category} #EvolvoAI`;
+
+        return InlineQueryResultBuilder.article(post.id, post.title, {
+          description: post.excerpt.substring(0, 100) + "...",
+          thumbnail_url: post.imageUrl || undefined,
+        }).text(messageText, { parse_mode: "HTML" } as any);
+      });
 
       await ctx.answerInlineQuery(results, { cache_time: 60 });
     } catch (error) {
