@@ -2,13 +2,14 @@
 
 /**
  * Server Startup Script
- * This script starts the Next.js server and sets up cron jobs
+ * This script starts the Next.js server, Telegram bot, and sets up cron jobs
  */
 
 import { createServer } from "http";
 import { parse } from "url";
 import next from "next";
 import { setupCronJobs } from "./lib/cron";
+import { startBot } from "./lib/telegram";
 
 const hostname = "0.0.0.0";
 const port = parseInt(process.env.PORT || "3000", 10);
@@ -45,6 +46,12 @@ async function main() {
       console.log(`🚀 Server running at http://${hostname}:${port}/`);
       console.log(`📊 Environment: Production`);
       console.log(`⏰ Cron jobs are active`);
+      
+      // Start Telegram bot
+      startBot().catch((err) => {
+        console.error("❌ Failed to start Telegram bot:", err);
+      });
+      console.log(`🤖 Telegram bot starting...`);
     });
   } catch (err) {
     console.error("Error starting server:", err);

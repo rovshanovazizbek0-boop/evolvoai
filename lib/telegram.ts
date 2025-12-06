@@ -1,5 +1,6 @@
 import { Bot, Context, InlineQueryResultBuilder } from "grammy";
 import { prisma } from "./prisma";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 if (!process.env.TELEGRAM_BOT_TOKEN) {
   throw new Error("TELEGRAM_BOT_TOKEN is not defined");
@@ -383,6 +384,9 @@ export function setupBotCommands(): void {
       await ctx.reply("Xizmatlar ro'yxati uchun /services bosing");
     } else if (text === "📞 Aloqa") {
       await ctx.reply("Aloqa ma'lumotlari uchun /contact bosing");
+    } else if (!text.startsWith("/")) {
+      // AI ASSISTANT - Answer any question with Gemini
+      await handleAIMessage(ctx, text);
     }
   });
 
@@ -448,5 +452,57 @@ export async function startBot(): Promise<void> {
   console.log("Telegram bot is running...");
 }
 
-export { bot };
+// AI Assistant - Handle user messages with Gemini
+async function handleAIMessage(ctx: Context, userMessage: string): Promise<void> {
+  try {
+    // Show typing indicator
+    await ctx.replyWithChatAction("typing");
 
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      await ctx.reply("❌ AI xizmati hozircha mavjud emas. /contact orqali bog'laning.");
+      return;
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    const systemPrompt = `Sen EvolvoAI kompaniyasining AI assistentisan. 
+    
+Kompaniya haqida:
+- EvolvoAI - O'zbekistonda AI va web development xizmatlari
+- Xizmatlar: Web saytlar, Telegram botlar, AI chatbotlar, biznes avtomatlashtirish
+- Telefon: +998 99 644 84 44
+- Telegram: @evolvoaichannel (kanal), @evolvoai_bot (bot)
+- Email: azizbekboy84@gmail.com
+- Manzil: Toshkent, Nurafshon aylanma yo'li 12 uy
+
+Qoidalar:
+- Har doim O'zbek tilida javob ber
+- Qisqa va aniq javob ber (maksimum 500 belgi)
+- Agar kompaniya xizmatlari haqida so'ralsa, batafsil ma'lumot ber
+- Xaridor bo'lishni xohlasa, /contact buyrug'ini yoki telefon raqamini taklif qil
+- Do'stona va professional bo'l
+- Emoji ishlatish mumkin
+
+Foydalanuvchi savoli:`;
+
+    const result = await model.generateContent(`${systemPrompt}\n\n${userMessage}`);
+    const response = result.response.text();
+
+    if (response) {
+      await ctx.reply(response, { parse_mode: "HTML" });
+    } else {
+      await ctx.reply("❌ Javob yaratib bo'lmadi. Iltimos, qayta urinib ko'ring.");
+    }
+  } catch (error) {
+    console.error("AI Assistant error:", error);
+    await ctx.reply(
+      "❌ Kechirasiz, hozir javob bera olmadim.\n\n" +
+      "📞 Aloqa: +998 99 644 84 44\n" +
+      "💬 Telegram: @evolvoaichannel"
+    );
+  }
+}
+
+export { bot };
