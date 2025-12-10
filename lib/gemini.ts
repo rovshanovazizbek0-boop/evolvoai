@@ -67,15 +67,16 @@ Javobni quyidagi JSON formatda qaytaring:
   "keywords": ["kalit1", "kalit2", "kalit3"]
 }`;
 
-// Generate content with a specific client
+// Generate content with a specific client and model
 async function generateWithClient(
   client: GoogleGenerativeAI, 
   category: string,
-  keyIndex: number
+  keyIndex: number,
+  modelName: string = "gemini-2.0-flash"
 ): Promise<GeneratedContent> {
-  const model = client.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = client.getGenerativeModel({ model: modelName });
   
-  console.log(`[Gemini] Using API key ${keyIndex + 1}/${clients.length}`);
+  console.log(`[Gemini] Using API key ${keyIndex + 1}/${clients.length} with model ${modelName}`);
   
   const result = await model.generateContent(prompt(category));
   const response = await result.response;
@@ -99,29 +100,29 @@ async function generateWithClient(
 
 export async function generateBlogPost(category: string): Promise<GeneratedContent> {
   let lastError: Error | null = null;
+  const models = ["gemini-2.0-flash", "gemini-1.5-flash"];
 
-  // Try each API key in order
-  for (let i = 0; i < clients.length; i++) {
-    try {
-      return await generateWithClient(clients[i], category, i);
-    } catch (error: any) {
-      lastError = error;
-      
-      // Check if it's a quota error (429)
-      if (error?.status === 429 || error?.message?.includes('429') || error?.message?.includes('quota')) {
-        console.warn(`[Gemini] API key ${i + 1} quota exceeded, trying next key...`);
+  // Try each combination of Model + API Key
+  for (const modelName of models) {
+    for (let i = 0; i < clients.length; i++) {
+      try {
+        return await generateWithClient(clients[i], category, i, modelName);
+      } catch (error: any) {
+        lastError = error;
+        
+        // Log warning but continue to next option
+        console.warn(`[Gemini] Failed with Key ${i + 1} & Model ${modelName}: ${error?.message?.substring(0, 100)}...`);
+        
+        // If it's a quota error or 503 (overloaded), continue. 
+        // For other fatal errors (like invalid prompt), we might want to throw, but safer to try all options.
         continue;
       }
-      
-      // For other errors, throw immediately
-      console.error(`[Gemini] Error with API key ${i + 1}:`, error);
-      throw error;
     }
   }
 
-  // All keys failed
-  console.error(`[Gemini] All ${clients.length} API keys failed`);
-  throw lastError || new Error("All API keys exhausted");
+  // All combinations failed
+  console.error(`[Gemini] All keys and models failed. Last error:`, lastError);
+  throw lastError || new Error("All API keys and models exhausted");
 }
 
 export async function generateMultiplePosts(
