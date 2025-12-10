@@ -72,9 +72,14 @@ async function generateWithClient(
   client: GoogleGenerativeAI, 
   category: string,
   keyIndex: number,
-  modelName: string = "gemini-2.0-flash"
+  modelName: string = "gemini-2.5-flash"
 ): Promise<GeneratedContent> {
-  const model = client.getGenerativeModel({ model: modelName });
+  const model = client.getGenerativeModel({ 
+    model: modelName,
+    generationConfig: {
+      responseMimeType: "application/json",
+    }
+  });
   
   console.log(`[Gemini] Using API key ${keyIndex + 1}/${clients.length} with model ${modelName}`);
   
@@ -82,48 +87,43 @@ async function generateWithClient(
   const response = await result.response;
   const text = response.text();
 
-  // Clean the response and parse JSON
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    throw new Error("Failed to parse JSON from Gemini response");
+  try {
+    // If the model respects responseMimeType, it should be valid JSON.
+    // We still do a basic cleanup just in case it wraps in markdown
+    const cleanedText = text.replace(/```json\s*|\s*```/g, "").trim();
+    const parsedContent: GeneratedContent = JSON.parse(cleanedText);
+
+    // Validate required fields
+    if (!parsedContent.title || !parsedContent.content) {
+      throw new Error("Generated content is missing required fields");
+    }
+
+    return parsedContent;
+  } catch (parseError) {
+    console.error(`[Gemini] JSON Parse Error for ${modelName}:`, parseError);
+    console.error(`[Gemini] Raw text was:`, text.substring(0, 200) + "...");
+    throw new Error(`Failed to parse JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
   }
-
-  const parsedContent: GeneratedContent = JSON.parse(jsonMatch[0]);
-
-  // Validate required fields
-  if (!parsedContent.title || !parsedContent.content) {
-    throw new Error("Generated content is missing required fields");
-  }
-
-  return parsedContent;
 }
 
 export async function generateBlogPost(category: string): Promise<GeneratedContent> {
   let lastError: Error | null = null;
   
-  // Extensive list of models to try in order of preference
+  // Prioritize working models. Removed 1.5/1.0 pro models that returned 404.
   const models = [
-    "gemini-2.5-flash",       // User suggested, verified working on 10.12.2025
-    "gemini-2.0-flash-exp",   // Newest, fastest
-    "gemini-2.0-flash",       // Alias
-    "gemini-1.5-flash",       // Standard 1.5 Flash
-    "gemini-1.5-flash-002",   // Specific version
-    "gemini-1.5-pro",         // Stronger model
-    "gemini-1.5-pro-002",     // Specific version
-    "gemini-pro",             // Fallback to 1.0
+    "gemini-2.5-flash",       // Confirmed working (but sometimes bad JSON)
+    "gemini-2.0-flash-exp",   // Has quota usually, but good fallback
+    "gemini-2.0-flash",       // Has quota usually
   ];
 
   // Try each combination of Model + API Key
   for (const modelName of models) {
     for (let i = 0; i < clients.length; i++) {
       try {
-        // Skip calling if we know the key is exhausted for this run? 
-        // No, quotas might be per-model.
         return await generateWithClient(clients[i], category, i, modelName);
       } catch (error: any) {
         lastError = error;
         
-        // Log warning but continue to next option
         const errorMessage = error?.message || "Unknown error";
         console.warn(`[Gemini] Failed with Key ${i + 1} & Model ${modelName}: ${errorMessage.substring(0, 100)}...`);
         
