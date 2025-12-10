@@ -1,10 +1,17 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY is not defined in environment variables");
+// API keys with fallback support
+const API_KEYS = [
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY2,
+].filter(Boolean) as string[];
+
+if (API_KEYS.length === 0) {
+  throw new Error("No GEMINI_API_KEY configured in environment variables");
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Create clients for each API key
+const clients = API_KEYS.map(key => new GoogleGenerativeAI(key));
 
 export const categories = [
   "biznes",
@@ -30,10 +37,7 @@ export interface GeneratedContent {
   keywords: string[];
 }
 
-export async function generateBlogPost(category: string): Promise<GeneratedContent> {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-  const prompt = `Sen professional ${category} bo'yicha kontent yozuvchisan. 
+const prompt = (category: string) => `Sen professional ${category} bo'yicha kontent yozuvchisan. 
 O'zbek auditoriyasi uchun qiziqarli, amaliy va SEO-optimallashtirilgan blog post yarat. 
 
 Mavzu: ${category} sohasida dolzarb va amaliy mavzu tanlang
@@ -62,29 +66,61 @@ Javobni quyidagi JSON formatda qaytaring:
   "keywords": ["kalit1", "kalit2", "kalit3"]
 }`;
 
-  try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+// Generate content with a specific client
+async function generateWithClient(
+  client: GoogleGenerativeAI, 
+  category: string,
+  keyIndex: number
+): Promise<GeneratedContent> {
+  const model = client.getGenerativeModel({ model: "gemini-2.0-flash" });
+  
+  console.log(`[Gemini] Using API key ${keyIndex + 1}/${clients.length}`);
+  
+  const result = await model.generateContent(prompt(category));
+  const response = await result.response;
+  const text = response.text();
 
-    // Clean the response and parse JSON
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("Failed to parse JSON from Gemini response");
-    }
-
-    const parsedContent: GeneratedContent = JSON.parse(jsonMatch[0]);
-
-    // Validate required fields
-    if (!parsedContent.title || !parsedContent.content) {
-      throw new Error("Generated content is missing required fields");
-    }
-
-    return parsedContent;
-  } catch (error) {
-    console.error(`Error generating content for ${category}:`, error);
-    throw error;
+  // Clean the response and parse JSON
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error("Failed to parse JSON from Gemini response");
   }
+
+  const parsedContent: GeneratedContent = JSON.parse(jsonMatch[0]);
+
+  // Validate required fields
+  if (!parsedContent.title || !parsedContent.content) {
+    throw new Error("Generated content is missing required fields");
+  }
+
+  return parsedContent;
+}
+
+export async function generateBlogPost(category: string): Promise<GeneratedContent> {
+  let lastError: Error | null = null;
+
+  // Try each API key in order
+  for (let i = 0; i < clients.length; i++) {
+    try {
+      return await generateWithClient(clients[i], category, i);
+    } catch (error: any) {
+      lastError = error;
+      
+      // Check if it's a quota error (429)
+      if (error?.status === 429 || error?.message?.includes('429') || error?.message?.includes('quota')) {
+        console.warn(`[Gemini] API key ${i + 1} quota exceeded, trying next key...`);
+        continue;
+      }
+      
+      // For other errors, throw immediately
+      console.error(`[Gemini] Error with API key ${i + 1}:`, error);
+      throw error;
+    }
+  }
+
+  // All keys failed
+  console.error(`[Gemini] All ${clients.length} API keys failed`);
+  throw lastError || new Error("All API keys exhausted");
 }
 
 export async function generateMultiplePosts(
