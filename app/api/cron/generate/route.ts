@@ -11,7 +11,7 @@ function verifyCronSecret(request: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET;
   
   if (!cronSecret) {
-    console.warn("CRON_SECRET not set - allowing request");
+    console.warn("[CRON] CRON_SECRET not set - allowing request");
     return true;
   }
   
@@ -19,9 +19,37 @@ function verifyCronSecret(request: NextRequest): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  console.log("[CRON API] Request received at", new Date().toISOString());
+  
   // Verify authorization
   if (!verifyCronSecret(request)) {
+    console.log("[CRON API] Unauthorized request");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  console.log("[CRON API] Authorized successfully");
+  
+  // Check required environment variables
+  const envCheck = {
+    GEMINI_API_KEY: !!process.env.GEMINI_API_KEY,
+    DATABASE_URL: !!process.env.DATABASE_URL,
+    TELEGRAM_BOT_TOKEN: !!process.env.TELEGRAM_BOT_TOKEN,
+  };
+  
+  console.log("[CRON API] Environment check:", envCheck);
+  
+  if (!envCheck.GEMINI_API_KEY) {
+    return NextResponse.json({
+      error: "GEMINI_API_KEY not configured",
+      envCheck
+    }, { status: 500 });
+  }
+  
+  if (!envCheck.DATABASE_URL) {
+    return NextResponse.json({
+      error: "DATABASE_URL not configured",
+      envCheck
+    }, { status: 500 });
   }
 
   const searchParams = request.nextUrl.searchParams;
@@ -39,9 +67,13 @@ export async function GET(request: NextRequest) {
     } else {
       selectedCategory = categories[Math.floor(Math.random() * categories.length)];
     }
+    
+    console.log(`[CRON API] Selected category: ${selectedCategory}`);
 
     // Generate content using Gemini
+    console.log("[CRON API] Calling Gemini API...");
     const generatedContent = await generateBlogPost(selectedCategory);
+    console.log("[CRON API] Content generated:", generatedContent.title?.substring(0, 50));
     
     // Generate unique slug
     const slug = generateSlug(generatedContent.title);
@@ -50,10 +82,12 @@ export async function GET(request: NextRequest) {
     const readTime = calculateReadTime(generatedContent.content);
     
     // Fetch image from Unsplash
+    console.log("[CRON API] Fetching image...");
     const image = await fetchCategoryImage(selectedCategory);
     console.log(`🖼️ Image by ${image.author}`);
 
     // Save to database
+    console.log("[CRON API] Saving to database...");
     const post = await prisma.blogPost.create({
       data: {
         category: selectedCategory,
@@ -69,6 +103,7 @@ export async function GET(request: NextRequest) {
         status: "PUBLISHED",
       },
     });
+    console.log("[CRON API] Blog post saved with ID:", post.id);
 
     // Track image download
     if (image.downloadUrl) {
@@ -88,14 +123,14 @@ export async function GET(request: NextRequest) {
       await sendToChannel(message);
       console.log(`📲 Sent to Telegram channel`);
     } catch (telegramError) {
-      console.error("Telegram error:", telegramError);
+      console.error("Telegram error (non-fatal):", telegramError);
     }
 
     // Notify subscribers
     try {
       await notifySubscribers(message);
     } catch (e) {
-      console.error("Subscriber notification error:", e);
+      console.error("Subscriber notification error (non-fatal):", e);
     }
 
     console.log(`✅ [CRON API] Published: "${post.title}" [${selectedCategory}]`);
@@ -116,7 +151,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { 
         error: "Failed to generate post", 
-        details: error instanceof Error ? error.message : "Unknown error" 
+        details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined
       },
       { status: 500 }
     );
