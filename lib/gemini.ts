@@ -1,9 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// API keys with fallback support
+// API keys with fallback support (up to 3 keys)
 const API_KEYS = [
   process.env.GEMINI_API_KEY,
   process.env.GEMINI_API_KEY2,
+  process.env.GEMINI_API_KEY3,
 ].filter(Boolean) as string[];
 
 if (API_KEYS.length === 0) {
