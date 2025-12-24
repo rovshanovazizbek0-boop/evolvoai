@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 // Client WebSocket orqali ulanadi, biz esa Gemini Live API ga yo'naltiramiz
 
 export async function GET(req: NextRequest) {
-  // WebSocket upgrade uchun
-  const apiKey = process.env.GEMINI_API_KEY;
+  // WebSocket upgrade uchun - GEMINI_API_KEY3 audio uchun alohida
+  const apiKey = process.env.GEMINI_API_KEY3 || process.env.GEMINI_API_KEY;
   
   if (!apiKey) {
     return NextResponse.json(

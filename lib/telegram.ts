@@ -506,7 +506,8 @@ export function setupBotCommands(): void {
       // Process with Gemini Native Audio Model
       await ctx.replyWithChatAction("typing");
       
-      const apiKey = process.env.GEMINI_API_KEY;
+      // Use GEMINI_API_KEY3 for audio processing (separate quota)
+      const apiKey = process.env.GEMINI_API_KEY3 || process.env.GEMINI_API_KEY;
       if (!apiKey) {
         await ctx.reply("❌ AI xizmati hozircha mavjud emas.");
         return;
@@ -514,7 +515,7 @@ export function setupBotCommands(): void {
 
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash-preview-05-20" // Use stable model for audio understanding
+        model: "gemini-2.5-flash-native-audio-preview-12-2025" // Native audio model
       });
 
       // System prompt for audio understanding
