@@ -1,73 +1,77 @@
-# EvolvoAI - Render.com Deploy Guide
+# EvolvoAI - Render.com Deploy Qo'llanmasi
 
-Ushbu qo'llanma orqali **EvolvoAI** loyihasini **Render.com** ga bepul deploy qilishingiz mumkin.
+## 1. GitHub Repository
 
-## 1. Tayyorgarlik
+Kod allaqachon GitHub ga push qilindi:
+```
+https://github.com/rovshanovazizbek0-boop/evolvoai.git
+```
 
-1. Loyihangizni **GitHub** ga yuklang (agar yuklanmagan bo'lsa).
-2. [Render.com](https://render.com) dan ro'yxatdan o'ting (GitHub orqali kiring).
+## 2. Render.com Dashboard
 
-## 2. Blueprint Orqali Deploy (Eng Oson Usul)
+1. https://dashboard.render.com ga kiring
+2. **New +** → **Web Service** tanlang
+3. GitHub repository ni ulang: `rovshanovazizbek0-boop/evolvoai`
 
-Biz loyihada `render.yaml` faylini yaratdik, bu jarayonni avtomatlashtiradi.
+## 3. Build Sozlamalari
 
-1. Render Dashboard da **"New +"** tugmasini bosing va **"Blueprint"** ni tanlang.
-2. **"Connect a repository"** bo'limida GitHub dagi `evolvoai` repozitoriyangizni tanlang.
-3. **"Service Name"** ga nom bering (masalan: `evolvoai-app`).
-4. **"Apply"** tugmasini bosing.
+| Sozlama | Qiymat |
+|---------|--------|
+| **Name** | evolvoai |
+| **Region** | Oregon (US West) |
+| **Branch** | main |
+| **Runtime** | Node |
+| **Build Command** | `npm install && npx prisma generate && npm run build` |
+| **Start Command** | `npm start` |
 
-Render avtomatik ravishda:
-- **PostgreSQL Database** yaratadi
-- **Web Service** (Next.js app) yaratadi
-- Ikkalasini bir-biriga ulaydi
+## 4. Environment Variables (MUHIM!)
 
-## 3. Environment Variables Sozlash
+Render.com → **Environment** bo'limiga qo'shing:
 
-Blueprint yaratilgandan so'ng, ba'zi maxfiy kalitlarni qo'lda kiritish kerak bo'ladi.
+```env
+# Database
+DATABASE_URL=postgresql://...your_render_postgres_url...
 
-1. Render Dashboard da **evolvoai** web service'iga kiring.
-2. **"Environment"** bo'limiga o'ting.
-3. Quyidagi o'zgaruvchilarni tekshiring va to'ldiring:
+# Gemini AI
+GEMINI_API_KEY=your_main_api_key
+GEMINI_API_KEY3=your_audio_api_key
 
-| Key | Value | Izoh |
-|-----|-------|------|
-| `GEMINI_API_KEY` | `AIzaSy...` | Google AI Studio dan olingan key |
-| `TELEGRAM_BOT_TOKEN` | `123456:ABC...` | BotFather dan olingan token |
-| `TELEGRAM_CHANNEL_ID` | `@kanal_nomi` | Kanalingiz username'i |
-| `TELEGRAM_ADMIN_ID` | `99887766` | O'zingizning Telegram ID raqamingiz |
-| `NEXT_PUBLIC_APP_URL` | `https://sizning-app.onrender.com` | Render bergan domen |
-| `NEXTAUTH_URL` | `https://sizning-app.onrender.com` | Render bergan domen |
+# Telegram
+TELEGRAM_BOT_TOKEN=8258225391:AAFRtCKfTgK3NOtqBVsgY7kDmyB1mWCDdnQ
+TELEGRAM_CHANNEL_ID=@evolvoaichannel
 
-> **Eslatma:** `DATABASE_URL`, `NEXTAUTH_SECRET` va `CRON_SECRET` avtomatik yaratiladi.
+# App
+NEXT_PUBLIC_APP_URL=https://evolvoai-j86e.onrender.com
+NEXTAUTH_URL=https://evolvoai-j86e.onrender.com
+NEXTAUTH_SECRET=your_secret_key
 
-## 4. Deploy Jarayoni
+# Admin
+ADMIN_EMAIL=admin@evolvoai.uz
+ADMIN_PASSWORD=your_admin_password
+```
 
-1. O'zgaruvchilarni saqlaganingizdan so'ng, **"Manual Deploy"** -> **"Deploy latest commit"** tugmasini bosing.
-2. Build jarayoni boshlanadi (taxminan 5-10 daqiqa davom etadi).
-3. Agar hammasi to'g'ri bo'lsa, **"Live"** statusini ko'rasiz.
+## 5. Deploy
 
-## 5. Admin Foydalanuvchi Yaratish
+1. **Create Web Service** tugmasini bosing
+2. Deploy avtomatik boshlanadi (5-10 daqiqa)
+3. Build logs ni kuzating
 
-Deploy bo'lgandan so'ng, database bo'sh bo'ladi. Admin yaratish uchun:
+## 6. Deploy Tugagandan Keyin
 
-1. Render da Web Service ichida **"Shell"** tabiga o'ting.
-2. Quyidagi buyruqni yozing:
-   ```bash
-   node scripts/create-admin.js
-   ```
-3. Bu sizga admin login va parolini chiqarib beradi.
+Tekshiring:
+- https://evolvoai-ysus.onrender.com - Asosiy sayt
+- https://evolvoai-ysus.onrender.com/live-audio - Live Audio
+- https://evolvoai-ysus.onrender.com/chatbot - Chatbot
 
-## 6. Kontent Yaratish (Seed)
+## 7. Xatolik Bo'lsa
 
-Sayt bo'sh ko'rinmasligi uchun boshlang'ich kontentni yuklang:
+**Build xatosi:**
+- Logs ni tekshiring
+- `prisma generate` buyrug'ini build command ga qo'shing
 
-1. Yana **"Shell"** tabida:
-   ```bash
-   node scripts/seed-all-content.js
-   ```
-2. Bu 8 ta blog post va 6 ta portfolio loyihasini yaratadi.
+**Database xatosi:**
+- Render PostgreSQL yarating
+- DATABASE_URL ni yangilang
 
-## 🎉 Tabriklaymiz!
-
-Saytingiz endi internetda jonli! 
-Domen: `https://sizning-app-nomi.onrender.com`
+**Audio ishlamasa:**
+- GEMINI_API_KEY3 qo'shilganini tekshiring
