@@ -59,7 +59,7 @@ O'zbek auditoriyasi uchun yuqori sifatli, chuqur tahliliy va jurnalistik uslubda
 - FAQAT ${currentYear} yilgi eng so'nggi, dolzarb ma'lumotlarni ishlatgin
 - Eski statistikalar (2023, 2022 va undan oldingi) ISHLATMA
 - ${currentYear} yil dekabr oyidagi eng yangi trendlar va voqealar haqida yoz
-- Sun'iy intellekt, texnologiya sohasida eng so'nggi yangiliklar (GPT-4, Gemini 2.0, Claude 3.5 va h.k.)
+- Sun'iy intellekt sohasida eng so'nggi AI modellari va yangiliklar haqida yoz
 - O'zbekistondagi eng so'nggi raqamli transformatsiya va IT yangiliklari
 
 🎯 MAVZU: ${category} sohasida hozirgi kundagi eng dolzarb, muhokama qilinayotgan mavzuni tanla.
