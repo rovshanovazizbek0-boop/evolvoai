@@ -239,3 +239,21 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-400 dark:bg-gray-600;
 }
+
+/* Hide scrollbar on mobile devices */
+@media (max-width: 768px) {
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  *::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+    width: 0;
+    height: 0;
+  }
+  
+  html, body {
+    overflow-x: hidden;
+  }
+}
