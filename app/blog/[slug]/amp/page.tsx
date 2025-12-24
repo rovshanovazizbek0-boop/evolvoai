@@ -32,7 +32,7 @@ export default async function AMPBlogPage({ params }: PageProps) {
     notFound();
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-ysus.onrender.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-j86e.onrender.com";
 
   // AMP HTML - simplified, fast-loading version
   const ampHtml = `

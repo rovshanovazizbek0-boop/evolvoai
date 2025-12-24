@@ -1,5 +1,5 @@
 // Service Worker for Push Notifications
-// EvolvoAI - https://evolvoai-ysus.onrender.com
+// EvolvoAI - https://evolvoai-j86e.onrender.com
 
 const CACHE_NAME = 'evolvoai-v1';
 const urlsToCache = [

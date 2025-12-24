@@ -59,9 +59,9 @@ ADMIN_PASSWORD=your_admin_password
 ## 6. Deploy Tugagandan Keyin
 
 Tekshiring:
-- https://evolvoai-ysus.onrender.com - Asosiy sayt
-- https://evolvoai-ysus.onrender.com/live-audio - Live Audio
-- https://evolvoai-ysus.onrender.com/chatbot - Chatbot
+- https://evolvoai-j86e.onrender.com - Asosiy sayt
+- https://evolvoai-j86e.onrender.com/live-audio - Live Audio
+- https://evolvoai-j86e.onrender.com/chatbot - Chatbot
 
 ## 7. Xatolik Bo'lsa
 

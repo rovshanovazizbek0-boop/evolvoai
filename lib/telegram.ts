@@ -81,7 +81,7 @@ export async function notifySubscribers(message: TelegramMessage): Promise<void>
 
 function formatBlogPostMessage(message: TelegramMessage): string {
   const emoji = getCategoryEmoji(message.category || "");
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-ysus.onrender.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-j86e.onrender.com";
   
   let formatted = `${emoji} <b>${message.title}</b>\n\n`;
   formatted += `${message.content}\n\n`;
@@ -121,7 +121,7 @@ export function setupBotCommands(): void {
   // /start command
   bot.command("start", async (ctx: Context) => {
     // Telegram Mini App faqat HTTPS talab qiladi
-    const webAppUrl = "https://evolvoai-ysus.onrender.com";
+    const webAppUrl = "https://evolvoai-j86e.onrender.com";
     
     await ctx.reply(
       `👋 Xush kelibsiz! EvolvoAI Bot ga!\n\n` +
@@ -287,7 +287,7 @@ export function setupBotCommands(): void {
         return;
       }
 
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-ysus.onrender.com";
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-j86e.onrender.com";
       const emoji = getCategoryEmoji(post.category);
 
       const message = 
@@ -407,7 +407,7 @@ export function setupBotCommands(): void {
         });
         const post = posts[0];
         if (post) {
-          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-ysus.onrender.com";
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-j86e.onrender.com";
           const msg = `🎲 <b>${post.title}</b>\n\n${post.excerpt}\n\n🔗 <a href="${baseUrl}/blog/${post.slug}">O'qish</a>`;
           if (post.imageUrl) {
             await ctx.replyWithPhoto(post.imageUrl, { caption: msg, parse_mode: "HTML" });
@@ -456,7 +456,7 @@ export function setupBotCommands(): void {
         });
       }
 
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-ysus.onrender.com";
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://evolvoai-j86e.onrender.com";
 
       const results = posts.map((post) => {
         const messageText = 
