@@ -38,8 +38,29 @@ export interface GeneratedContent {
   keywords: string[];
 }
 
-const prompt = (category: string) => `Sen O'zbekistonning yetakchi ${category} bo'yicha professional jurnalist va tahlilchisan.
+const prompt = (category: string) => {
+  // Get current date in Uzbek format
+  const now = new Date();
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  };
+  const currentDate = now.toLocaleDateString('uz-UZ', options);
+  const currentYear = now.getFullYear();
+  
+  return `Sen O'zbekistonning yetakchi ${category} bo'yicha professional jurnalist va tahlilchisan.
 O'zbek auditoriyasi uchun yuqori sifatli, chuqur tahliliy va jurnalistik uslubda maqola yoz.
+
+📅 BUGUNGI SANA: ${currentDate}
+📆 JORIY YIL: ${currentYear}
+
+⚠️ MUHIM TALABLAR:
+- FAQAT ${currentYear} yilgi eng so'nggi, dolzarb ma'lumotlarni ishlatgin
+- Eski statistikalar (2023, 2022 va undan oldingi) ISHLATMA
+- ${currentYear} yil dekabr oyidagi eng yangi trendlar va voqealar haqida yoz
+- Sun'iy intellekt, texnologiya sohasida eng so'nggi yangiliklar (GPT-4, Gemini 2.0, Claude 3.5 va h.k.)
+- O'zbekistondagi eng so'nggi raqamli transformatsiya va IT yangiliklari
 
 🎯 MAVZU: ${category} sohasida hozirgi kundagi eng dolzarb, muhokama qilinayotgan mavzuni tanla.
 
@@ -47,7 +68,7 @@ O'zbek auditoriyasi uchun yuqori sifatli, chuqur tahliliy va jurnalistik uslubda
 
 1. SARLAVHA (60-80 belgi):
    - Jurnalistik sarlavha: "Kim nima qildi" yoki "Nima sodir bo'ldi" formatida
-   - Misollar: "O'zbekiston IT sektori 2024-yilda rekord o'sish ko'rsatdi", "Yangi AI startaplar to'lqini: O'zbeklik dasturchilar jahon bozoriga chiqmoqda"
+   - Misollar: "O'zbekiston IT sektori ${currentYear}-yilda rekord o'sish ko'rsatdi", "Yangi AI startaplar to'lqini: O'zbeklik dasturchilar jahon bozoriga chiqmoqda"
 
 2. LID/KIRISH QISMI (2-3 gap):
    - Kim? Nima? Qachon? Qayerda? Nega? - 5W formatida
@@ -81,8 +102,8 @@ O'zbek auditoriyasi uchun yuqori sifatli, chuqur tahliliy va jurnalistik uslubda
    - O'quvchiga qo'shimcha harakatga undov (CTA)
 
 📝 YOZISH QOIDALARI:
-- Har bir da'vo faktlar bilan asoslansin
-- Raqamlar va statistika ishlatilsin
+- Har bir da'vo ${currentYear} yil faktlari bilan asoslansin
+- So'nggi raqamlar va statistika ishlatilsin
 - Ekspert fikrlari qo'shilsin (mutaxassis ismlari)
 - Bullet pointlar va ro'yxatlar ishlatilsin
 - Paragraflar qisqa bo'lsin (3-4 gap)
@@ -94,6 +115,7 @@ O'zbek auditoriyasi uchun yuqori sifatli, chuqur tahliliy va jurnalistik uslubda
 - Oddiy qo'llanma yoki "qanday qilish kerak" formatida yozma
 - Umumiy va sayoz mazmun yozma
 - Faktlarsiz da'volar qilma
+- ESKI (${currentYear - 1} va undan oldingi) ma'lumotlarni ishlatma
 
 Javobni quyidagi JSON formatda qaytaring:
 {
@@ -104,6 +126,7 @@ Javobni quyidagi JSON formatda qaytaring:
   "seoDescription": "SEO uchun tavsif (150-160 belgi)",
   "keywords": ["kalit1", "kalit2", "kalit3", "kalit4", "kalit5"]
 }`;
+};
 
 // Generate content with a specific client and model
 async function generateWithClient(
