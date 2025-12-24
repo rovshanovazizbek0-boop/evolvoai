@@ -114,14 +114,29 @@ export default function BlogPostContent({ post }: BlogPostContentProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="prose prose-lg prose-invert max-w-none mb-12"
-          style={{
-            color: "#E5E7EB",
-          }}
+          className="prose prose-lg prose-invert max-w-none mb-12
+            prose-headings:text-white prose-headings:font-bold
+            prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-purple-500/30 prose-h2:pb-3
+            prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-purple-300
+            prose-h4:text-xl prose-h4:mt-6 prose-h4:mb-2 prose-h4:text-cyan-300
+            prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4
+            prose-a:text-purple-400 prose-a:underline hover:prose-a:text-purple-300
+            prose-strong:text-white prose-strong:font-semibold
+            prose-em:text-purple-200 prose-em:italic
+            prose-ul:my-4 prose-ul:pl-6
+            prose-ol:my-4 prose-ol:pl-6
+            prose-li:text-gray-300 prose-li:mb-2 prose-li:marker:text-purple-400
+            prose-blockquote:border-l-4 prose-blockquote:border-purple-500 prose-blockquote:bg-purple-500/10 prose-blockquote:pl-6 prose-blockquote:py-3 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-gray-300
+            prose-code:bg-purple-500/20 prose-code:text-purple-300 prose-code:px-2 prose-code:py-1 prose-code:rounded-md prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+            prose-pre:bg-slate-900 prose-pre:border prose-pre:border-purple-500/30 prose-pre:rounded-xl prose-pre:p-4 prose-pre:overflow-x-auto
+            prose-table:border-collapse prose-table:w-full prose-table:my-6
+            prose-th:bg-purple-500/20 prose-th:text-white prose-th:font-semibold prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:border prose-th:border-purple-500/30
+            prose-td:px-4 prose-td:py-3 prose-td:border prose-td:border-purple-500/20 prose-td:text-gray-300
+            prose-hr:border-purple-500/30 prose-hr:my-8
+            prose-img:rounded-xl prose-img:shadow-lg"
         >
           <div
             dangerouslySetInnerHTML={{ __html: htmlContent }}
-            className="text-gray-200"
           />
         </motion.div>
 

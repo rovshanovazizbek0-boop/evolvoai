@@ -120,6 +120,9 @@ function getCategoryEmoji(category: string): string {
 export function setupBotCommands(): void {
   // /start command
   bot.command("start", async (ctx: Context) => {
+    // Telegram Mini App faqat HTTPS talab qiladi
+    const webAppUrl = "https://evolvoai-ysus.onrender.com";
+    
     await ctx.reply(
       `👋 Xush kelibsiz! EvolvoAI Bot ga!\n\n` +
       `Biz AI texnologiyalari bilan biznesingizni avtomatlashtiramiz.\n\n` +
@@ -133,14 +136,49 @@ export function setupBotCommands(): void {
       `💡 Inline rejim: @evolvoai_bot <qidiruv> yozing`,
       {
         reply_markup: {
-          keyboard: [
-            [{ text: "🔔 Obuna bo'lish" }, { text: "🎲 Tasodifiy post" }],
-            [{ text: "🌐 Xizmatlar" }, { text: "📞 Aloqa" }],
+          inline_keyboard: [
+            [
+              { 
+                text: "🌐 Web Saytni Ochish", 
+                web_app: { url: webAppUrl } 
+              }
+            ],
+            [
+              { text: "📞 Bog'lanish", callback_data: "contact" },
+              { text: "💼 Xizmatlar", callback_data: "services" }
+            ]
           ],
-          resize_keyboard: true,
         },
       }
     );
+  });
+
+  // Callback query handler for inline buttons
+  bot.on("callback_query:data", async (ctx) => {
+    const data = ctx.callbackQuery?.data;
+    
+    if (data === "contact") {
+      await ctx.answerCallbackQuery();
+      await ctx.reply(
+        `📞 <b>Aloqa Ma'lumotlari:</b>\n\n` +
+        `📧 Email: azizbekboy84@gmail.com\n` +
+        `📱 Telefon: +998 99 644 84 44\n` +
+        `🏠 Manzil: Toshkent, Nurafshon aylanma yo'li 12 uy\n` +
+        `💬 Telegram: @evolvoai`,
+        { parse_mode: "HTML" }
+      );
+    } else if (data === "services") {
+      await ctx.answerCallbackQuery();
+      await ctx.reply(
+        `🌐 <b>Bizning Xizmatlarimiz:</b>\n\n` +
+        `1️⃣ <b>Web Sayt Yaratish</b> - 500k dan\n` +
+        `2️⃣ <b>Telegram Bot</b> - 300k dan\n` +
+        `3️⃣ <b>AI Chatbot</b> - 1mln dan\n` +
+        `4️⃣ <b>Avtomatlashtirish</b> - shartnoma\n\n` +
+        `📞 Batafsil: +998 99 644 84 44`,
+        { parse_mode: "HTML" }
+      );
+    }
   });
 
   // /subscribe command - Subscribe to new posts
@@ -437,6 +475,93 @@ export function setupBotCommands(): void {
     } catch (error) {
       console.error("Inline query error:", error);
       await ctx.answerInlineQuery([]);
+    }
+  });
+
+  // VOICE MESSAGE HANDLER - Native Audio AI
+  bot.on("message:voice", async (ctx) => {
+    try {
+      console.log("📢 Voice message received");
+      await ctx.replyWithChatAction("record_voice");
+
+      const voice = ctx.message.voice;
+      if (!voice) {
+        await ctx.reply("❌ Ovozli xabar topilmadi.");
+        return;
+      }
+
+      // Download voice file
+      const file = await ctx.api.getFile(voice.file_id);
+      const fileUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${file.file_path}`;
+      
+      console.log("📥 Downloading voice file:", fileUrl);
+
+      // Fetch the voice file
+      const audioResponse = await fetch(fileUrl);
+      const audioBuffer = await audioResponse.arrayBuffer();
+      const base64Audio = Buffer.from(audioBuffer).toString('base64');
+
+      console.log("🎤 Audio size:", audioBuffer.byteLength, "bytes");
+
+      // Process with Gemini Native Audio Model
+      await ctx.replyWithChatAction("typing");
+      
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        await ctx.reply("❌ AI xizmati hozircha mavjud emas.");
+        return;
+      }
+
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-2.5-flash-preview-05-20" // Use stable model for audio understanding
+      });
+
+      // System prompt for audio understanding
+      const systemPrompt = `Sen EvolvoAI kompaniyasining AI assistentisan. 
+      
+Foydalanuvchi senga ovozli xabar yubordi. Ushbu audio xabarni tingla va javob ber.
+
+Kompaniya haqida:
+- EvolvoAI - O'zbekistonda AI va web development xizmatlari
+- Xizmatlar: Web saytlar, Telegram botlar, AI chatbotlar, biznes avtomatlashtirish
+- Telefon: +998 99 644 84 44
+- Telegram: @evolvoai_bot
+- Email: azizbekboy84@gmail.com
+
+Qoidalar:
+- O'zbek tilida javob ber
+- Qisqa va aniq javob ber
+- Do'stona va professional bo'l`;
+
+      // Send audio with text prompt
+      const result = await model.generateContent([
+        {
+          inlineData: {
+            mimeType: "audio/ogg",
+            data: base64Audio
+          }
+        },
+        systemPrompt + "\n\nFoydalanuvchi ovozli xabarini tingla va javob ber:"
+      ]);
+
+      const responseText = result.response.text();
+      console.log("🤖 AI Response:", responseText);
+
+      if (responseText) {
+        await ctx.reply(`🎤 *Ovozli xabaringizga javob:*\n\n${responseText}`, {
+          parse_mode: "Markdown"
+        });
+      } else {
+        await ctx.reply("❌ Javob yaratib bo'lmadi. Qayta urinib ko'ring.");
+      }
+
+    } catch (error) {
+      console.error("Voice message error:", error);
+      await ctx.reply(
+        "❌ Ovozli xabarni qayta ishlab bo'lmadi.\n\n" +
+        "📝 Matn yozing yoki qayta ovozli xabar yuboring."
+      );
     }
   });
 }
