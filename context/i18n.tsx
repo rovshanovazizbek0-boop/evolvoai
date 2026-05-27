@@ -15,7 +15,6 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>("uz");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // Load from localStorage on mount
@@ -23,7 +22,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     if (savedLang && (savedLang === "uz" || savedLang === "ru" || savedLang === "en")) {
       setLangState(savedLang);
     }
-    setMounted(true);
   }, []);
 
   const setLang = (newLang: Language) => {
@@ -47,11 +45,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       return `${section}.${key}`;
     }
   };
-
-  // Avoid hydration mismatch by rendering a fallback or shell until mounted
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <I18nContext.Provider value={{ lang, setLang, t }}>
