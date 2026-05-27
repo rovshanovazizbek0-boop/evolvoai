@@ -9,9 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Send, Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/context/i18n";
 
 export default function ContactSection() {
   const { toast } = useToast();
+  const { lang, t } = useI18n();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -38,8 +40,8 @@ export default function ContactSection() {
 
       if (response.ok) {
         toast({
-          title: "✅ Muvaffaqiyatli yuborildi!",
-          description: "Tez orada siz bilan bog'lanamiz.",
+          title: lang === "uz" ? "✅ Muvaffaqiyatli yuborildi!" : (lang === "ru" ? "✅ Успешно отправлено!" : "✅ Successfully sent!"),
+          description: lang === "uz" ? "Tez orada siz bilan bog'lanamiz." : (lang === "ru" ? "Мы свяжемся с вами в ближайшее время." : "We will contact you shortly."),
           variant: "default",
         });
         setFormData({
@@ -51,16 +53,16 @@ export default function ContactSection() {
         });
       } else {
         toast({
-          title: "❌ Xatolik yuz berdi",
-          description: "Iltimos, qayta urinib ko'ring yoki Telegram orqali bog'laning.",
+          title: "❌ Error",
+          description: lang === "uz" ? "Qayta urinib ko'ring." : "Please try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
-        title: "❌ Xatolik yuz berdi",
-        description: "Internet aloqasini tekshiring va qayta urinib ko'ring.",
+        title: "❌ Error",
+        description: "Failed to submit.",
         variant: "destructive",
       });
     } finally {
@@ -93,10 +95,10 @@ export default function ContactSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Loyihangizni <span className="text-gradient bg-gradient-to-r from-primary-400 to-purple-400 bg-clip-text text-transparent">Boshlang!</span>
+            {t("contact", "title")}
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Biz bilan bog&apos;laning va loyihangizni muhokama qilamiz
+            {t("contact", "subtitle")}
           </p>
         </motion.div>
 
@@ -113,7 +115,7 @@ export default function ContactSection() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <Label htmlFor="name" className="text-white">
-                      Ismingiz
+                      {t("contact", "nameLabel")}
                     </Label>
                     <Input
                       id="name"
@@ -122,13 +124,13 @@ export default function ContactSection() {
                       onChange={handleChange}
                       required
                       className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-                      placeholder="Ismingizni kiriting"
+                      placeholder={t("contact", "namePlaceholder")}
                     />
                   </div>
 
                   <div>
                     <Label htmlFor="email" className="text-white">
-                      Email
+                      {t("contact", "emailLabel")}
                     </Label>
                     <Input
                       id="email"
@@ -138,13 +140,13 @@ export default function ContactSection() {
                       onChange={handleChange}
                       required
                       className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-                      placeholder="email@example.com"
+                      placeholder={t("contact", "emailPlaceholder")}
                     />
                   </div>
 
                   <div>
                     <Label htmlFor="phone" className="text-white">
-                      Telefon
+                      {t("contact", "phoneLabel")}
                     </Label>
                     <Input
                       id="phone"
@@ -152,13 +154,13 @@ export default function ContactSection() {
                       value={formData.phone}
                       onChange={handleChange}
                       className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-                      placeholder="+998 90 123 45 67"
+                      placeholder={t("contact", "phonePlaceholder")}
                     />
                   </div>
 
                   <div>
                     <Label htmlFor="serviceType" className="text-white">
-                      Xizmat Turi
+                      {lang === "uz" ? "Xizmat Turi" : (lang === "ru" ? "Тип услуги" : "Service Type")}
                     </Label>
                     <select
                       id="serviceType"
@@ -166,19 +168,19 @@ export default function ContactSection() {
                       value={formData.serviceType}
                       onChange={handleChange as any}
                       required
-                      className="mt-2 w-full h-10 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                      className="mt-2 w-full h-10 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 animate-none"
                     >
-                      <option value="" className="bg-gray-900">Tanlang</option>
-                      <option value="web" className="bg-gray-900">Web Sayt</option>
+                      <option value="" className="bg-gray-900">{lang === "uz" ? "Tanlang" : (lang === "ru" ? "Выбрать" : "Select")}</option>
+                      <option value="web" className="bg-gray-900">{lang === "uz" ? "Web Sayt" : (lang === "ru" ? "Веб-сайт" : "Website")}</option>
                       <option value="telegram" className="bg-gray-900">Telegram Bot</option>
                       <option value="chatbot" className="bg-gray-900">AI Chatbot</option>
-                      <option value="automation" className="bg-gray-900">Avtomatlashtirish</option>
+                      <option value="automation" className="bg-gray-900">{lang === "uz" ? "Avtomatlashtirish" : (lang === "ru" ? "Автоматизация" : "Automation")}</option>
                     </select>
                   </div>
 
                   <div>
                     <Label htmlFor="message" className="text-white">
-                      Xabar
+                      {t("contact", "msgLabel")}
                     </Label>
                     <Textarea
                       id="message"
@@ -188,7 +190,7 @@ export default function ContactSection() {
                       required
                       rows={4}
                       className="mt-2 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-                      placeholder="Loyihangiz haqida gapirib bering..."
+                      placeholder={t("contact", "msgPlaceholder")}
                     />
                   </div>
 
@@ -199,7 +201,7 @@ export default function ContactSection() {
                     className="w-full"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Yuborilmoqda..." : "Yuborish"}
+                    {isSubmitting ? t("contact", "sendingButton") : t("contact", "submitButton")}
                     <Send className="ml-2 w-5 h-5" />
                   </Button>
                 </form>
@@ -217,7 +219,7 @@ export default function ContactSection() {
           >
             <div>
               <h3 className="text-2xl font-bold text-white mb-6">
-                Aloqa Ma&apos;lumotlari
+                {lang === "uz" ? "Aloqa Ma'lumotlari" : (lang === "ru" ? "Контактная информация" : "Contact Information")}
               </h3>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -235,7 +237,7 @@ export default function ContactSection() {
                     <Phone className="w-6 h-6 text-purple-400" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-1">Telefon</h4>
+                    <h4 className="text-white font-semibold mb-1">{lang === "uz" ? "Telefon" : (lang === "ru" ? "Телефон" : "Phone")}</h4>
                     <p className="text-gray-400">+998 99 644 84 44</p>
                   </div>
                 </div>
@@ -245,11 +247,11 @@ export default function ContactSection() {
                     <MapPin className="w-6 h-6 text-cyan-400" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-1">Manzil</h4>
+                    <h4 className="text-white font-semibold mb-1">{lang === "uz" ? "Manzil" : (lang === "ru" ? "Адрес" : "Address")}</h4>
                     <p className="text-gray-400">
-                      Toshkent shahar,
+                      {lang === "uz" ? "Toshkent shahar," : (lang === "ru" ? "город Ташкент," : "Tashkent city,")}
                       <br />
-                      Nurafshon aylanma yo'li 12 uy
+                      {lang === "uz" ? "Nurafshon aylanma yo'li 12 uy" : (lang === "ru" ? "ул. Нурафшон, дом 12" : "Nurafshon Ring Road, House 12")}
                     </p>
                   </div>
                 </div>
@@ -259,7 +261,7 @@ export default function ContactSection() {
                     <MessageCircle className="w-6 h-6 text-emerald-400" />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-1">Telegram Kanal</h4>
+                    <h4 className="text-white font-semibold mb-1">{lang === "uz" ? "Telegram Kanal" : (lang === "ru" ? "Телеграм Канал" : "Telegram Channel")}</h4>
                     <a
                       href="https://t.me/evolvoaichannel"
                       target="_blank"
@@ -276,10 +278,10 @@ export default function ContactSection() {
             <Card className="bg-gradient-to-br from-primary-500 to-purple-600 border-0">
               <CardContent className="p-6">
                 <h3 className="text-white font-bold text-xl mb-2">
-                  Tezkor Javob Olish
+                  {lang === "uz" ? "Tezkor Javob Olish" : (lang === "ru" ? "Быстрый ответ" : "Get Fast Support")}
                 </h3>
                 <p className="text-white/80 mb-4">
-                  Telegram bot orqali darhol bog&apos;laning va bepul konsultatsiya oling
+                  {lang === "uz" ? "Telegram bot orqali darhol bog'laning va bepul konsultatsiya oling" : (lang === "ru" ? "Свяжитесь мгновенно через бота и получите бесплатную консультацию" : "Connect instantly via bot and get a free expert consultation")}
                 </p>
                 <Button
                   variant="outline"

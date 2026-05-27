@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && tsc server.ts --outDir . --module commonjs --esModuleInterop --resolveJsonModule --skipLibCheck",
+    "build": "prisma db push --skip-generate && next build && tsc server.ts --outDir . --module commonjs --esModuleInterop --resolveJsonModule --skipLibCheck",
     "start": "node server.js",
     "lint": "next lint",
     "postinstall": "prisma generate",

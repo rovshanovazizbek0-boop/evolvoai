@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import { MessageCircle, Send, Bot, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useI18n } from "@/context/i18n";
 
 export default function FloatingContact() {
   const [showChatbot, setShowChatbot] = useState(false);
+  const { lang } = useI18n();
 
   return (
     <>
@@ -54,7 +56,9 @@ export default function FloatingContact() {
           <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-white/10">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-sm font-medium text-white">EvolvoAI Assistant</span>
+              <span className="text-sm font-medium text-white">
+                {lang === "uz" ? "EvolvoAI Assistent" : (lang === "ru" ? "Ассистент EvolvoAI" : "EvolvoAI Assistant")}
+              </span>
             </div>
             <button
               onClick={() => setShowChatbot(false)}
@@ -66,7 +70,7 @@ export default function FloatingContact() {
 
           <iframe
             src="/chatbot"
-            className="w-full flex-1"
+            className="w-full flex-1 animate-none"
             title="EvolvoAI Chatbot"
           />
         </motion.div>

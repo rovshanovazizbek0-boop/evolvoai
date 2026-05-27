@@ -4,39 +4,42 @@ import { motion } from "framer-motion";
 import { Globe, Bot, MessageSquare, Zap, ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-const services = [
-  {
-    icon: Globe,
-    title: "Web Sayt Yaratish",
-    description: "Next.js, React va zamonaviy texnologiyalar bilan responsive va SEO-optimallashtirilgan web saytlar",
-    features: ["Responsive dizayn", "SEO optimizatsiya", "Tez yuklanish", "Admin panel"],
-    color: "from-blue-500 to-cyan-500",
-  },
-  {
-    icon: Bot,
-    title: "Telegram Bot Rivojlantirish",
-    description: "Biznes jarayonlarini avtomatlashtiradigan, CRM bilan integratsiya qilingan Telegram botlar",
-    features: ["Avtomatlashtirish", "CRM integratsiya", "To'lov tizimlari", "Analitika"],
-    color: "from-purple-500 to-pink-500",
-  },
-  {
-    icon: MessageSquare,
-    title: "AI Chatbot Integratsiya",
-    description: "24/7 mijozlarga xizmat ko'rsatuvchi, tabiiy tilni tushunadigan AI chatbotlar",
-    features: ["GPT/Gemini AI", "Multilingual", "Kontekst eslab qolish", "CRM integratsiya"],
-    color: "from-emerald-500 to-teal-500",
-  },
-  {
-    icon: Zap,
-    title: "Biznes Avtomatlashtirish",
-    description: "Workflow avtomatlashtirish, API integratsiya va maxsus biznes yechimlar",
-    features: ["Workflow automation", "API integratsiya", "Ma'lumot tahlili", "Custom solutions"],
-    color: "from-amber-500 to-orange-500",
-  },
-];
+import { useI18n } from "@/context/i18n";
 
 export default function ServicesSection() {
+  const { t } = useI18n();
+
+  const services = [
+    {
+      icon: Globe,
+      title: t("services", "webDevTitle"),
+      description: t("services", "webDevDesc"),
+      features: ["Responsive dizayn", "SEO optimizatsiya", "Tez yuklanish", "Admin panel"],
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
+      icon: Bot,
+      title: t("services", "botDevTitle"),
+      description: t("services", "botDevDesc"),
+      features: ["Avtomatlashtirish", "CRM integratsiya", "To'lov tizimlari", "Analitika"],
+      color: "from-purple-500 to-pink-500",
+    },
+    {
+      icon: MessageSquare,
+      title: t("services", "aiIntegrateTitle"),
+      description: t("services", "aiIntegrateDesc"),
+      features: ["GPT/Gemini AI", "Multilingual", "Kontekst eslab qolish", "CRM integratsiya"],
+      color: "from-emerald-500 to-teal-500",
+    },
+    {
+      icon: Zap,
+      title: t("services", "designTitle"),
+      description: t("services", "designDesc"),
+      features: ["Workflow automation", "API integratsiya", "Ma'lumot tahlili", "Custom solutions"],
+      color: "from-amber-500 to-orange-500",
+    },
+  ];
+
   return (
     <section id="services" className="py-24 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,10 +52,10 @@ export default function ServicesSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Bizning <span className="text-gradient">Xizmatlarimiz</span>
+            {t("services", "title")}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            AI va zamonaviy texnologiyalar bilan biznesingizni keyingi bosqichga olib chiqing
+            {t("services", "subtitle")}
           </p>
         </motion.div>
 

@@ -5,19 +5,21 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const navItems = [
-  { name: "Bosh sahifa", href: "/" },
-  { name: "Xizmatlar", href: "#services" },
-  { name: "Narxlar", href: "#pricing" },
-  { name: "Portfolio", href: "#portfolio" },
-  { name: "FAQ", href: "#faq" },
-  { name: "Aloqa", href: "#contact" },
-];
+import { useI18n } from "@/context/i18n";
 
 export default function NavbarPremium() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { lang, setLang, t } = useI18n();
+
+  const navItems = [
+    { name: t("nav", "home"), href: "/" },
+    { name: t("nav", "services"), href: "#services" },
+    { name: t("nav", "pricing"), href: "#pricing" },
+    { name: t("nav", "portfolio"), href: "#portfolio" },
+    { name: t("nav", "faq"), href: "#faq" },
+    { name: t("nav", "contact"), href: "#contact" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,8 +79,18 @@ export default function NavbarPremium() {
             ))}
           </div>
 
-          {/* CTA Button */}
+          {/* Language Selector & CTA Button */}
           <div className="hidden md:flex items-center space-x-4">
+            <div className="relative group">
+              <button className="px-3 py-2 text-white hover:text-[#FF0080] font-medium bg-white/5 border border-white/10 rounded-xl transition-all flex items-center space-x-1.5 uppercase text-sm">
+                <span>🌐 {lang}</span>
+              </button>
+              <div className="absolute right-0 top-full mt-2 w-32 bg-gray-950 border border-white/10 rounded-xl shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <button onClick={() => setLang("uz")} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-white/5 transition-colors text-white ${lang === "uz" ? "text-[#FF0080] font-bold" : ""}`}>O'zbekcha</button>
+                <button onClick={() => setLang("ru")} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-white/5 transition-colors text-white ${lang === "ru" ? "text-[#FF0080] font-bold" : ""}`}>Русский</button>
+                <button onClick={() => setLang("en")} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-white/5 transition-colors text-white ${lang === "en" ? "text-[#FF0080] font-bold" : ""}`}>English</button>
+              </div>
+            </div>
             <Button 
               asChild
               className="rounded-xl font-bold px-6"
@@ -87,7 +99,7 @@ export default function NavbarPremium() {
                 boxShadow: "0 0 20px rgba(255, 0, 128, 0.4)",
               }}
             >
-              <a href="#contact">Bepul Konsultatsiya</a>
+              <a href="#contact">{t("nav", "order")}</a>
             </Button>
           </div>
 
@@ -123,6 +135,13 @@ export default function NavbarPremium() {
             }}
           >
             <div className="px-4 py-6 space-y-2">
+              {/* Language switcher for mobile */}
+              <div className="flex items-center space-x-2 px-4 py-2 border-b border-white/10 mb-2">
+                <button onClick={() => setLang("uz")} className={`px-3 py-1.5 text-xs rounded-lg border ${lang === "uz" ? "bg-[#FF0080] text-white border-[#FF0080]" : "bg-transparent text-gray-300 border-white/10"}`}>UZ</button>
+                <button onClick={() => setLang("ru")} className={`px-3 py-1.5 text-xs rounded-lg border ${lang === "ru" ? "bg-[#FF0080] text-white border-[#FF0080]" : "bg-transparent text-gray-300 border-white/10"}`}>RU</button>
+                <button onClick={() => setLang("en")} className={`px-3 py-1.5 text-xs rounded-lg border ${lang === "en" ? "bg-[#FF0080] text-white border-[#FF0080]" : "bg-transparent text-gray-300 border-white/10"}`}>EN</button>
+              </div>
+
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -149,7 +168,7 @@ export default function NavbarPremium() {
                   background: "linear-gradient(135deg, #FF0080, #7928CA)",
                 }}
               >
-                <a href="#contact" onClick={() => setIsOpen(false)}>Bepul Konsultatsiya</a>
+                <a href="#contact" onClick={() => setIsOpen(false)}>{t("nav", "order")}</a>
               </Button>
             </div>
           </motion.div>

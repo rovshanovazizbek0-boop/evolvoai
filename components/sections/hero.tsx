@@ -3,8 +3,11 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, Sparkles, Zap, Brain } from "lucide-react";
+import { useI18n } from "@/context/i18n";
 
 export default function HeroSection() {
+  const { t } = useI18n();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       {/* Animated Background */}
@@ -78,23 +81,22 @@ export default function HeroSection() {
           >
             <Sparkles className="w-4 h-4 text-primary-400" />
             <span className="text-white text-sm font-medium">
-              AI-Powered Solutions
+              {t("hero", "badge")}
             </span>
           </motion.div>
 
           {/* Headline */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-            AI Bilan Biznesingizni
+            {t("hero", "titlePre")}
             <br />
             <span className="text-gradient bg-gradient-to-r from-primary-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Avtomatlashtiring
+              {t("hero", "titleHighlight")}
             </span>
           </h1>
 
           {/* Sub-headline */}
           <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
-            Zamonaviy web saytlar, Telegram botlar, AI chatbotlar va biznes 
-            avtomatlashtirish yechmlarini taqdim etamiz
+            {t("hero", "subtitle")}
           </p>
 
           {/* CTA Buttons */}
@@ -105,7 +107,7 @@ export default function HeroSection() {
               size="lg"
               className="text-lg px-8 py-6 h-auto"
             >
-              <a href="#contact">Bepul Konsultatsiya</a>
+              <a href="#contact">{t("hero", "ctaPrimary")}</a>
             </Button>
             <Button
               asChild
@@ -113,17 +115,17 @@ export default function HeroSection() {
               size="lg"
               className="text-lg px-8 py-6 h-auto bg-white/10 backdrop-blur-lg border-white/20 text-white hover:bg-white/20"
             >
-              <a href="#portfolio">Portfolioni Ko&apos;rish</a>
+              <a href="#portfolio">{t("hero", "ctaSecondary")}</a>
             </Button>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {[
-              { number: "50+", label: "Loyihalar" },
-              { number: "30+", label: "Mijozlar" },
-              { number: "99%", label: "Mamnunlik" },
-              { number: "24/7", label: "Qo'llab-quvvatlash" },
+              { number: "50+", label: t("hero", "statProjects") },
+              { number: "30+", label: t("hero", "statClients") },
+              { number: "99%", label: "Satisfaction" },
+              { number: "24/7", label: "Support" },
             ].map((stat, index) => (
               <motion.div
                 key={index}

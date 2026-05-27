@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { AdSenseScript } from "@/components/ads/google-adsense";
 import { PushNotificationBanner } from "@/components/ui/push-notification";
+import { I18nProvider } from "@/context/i18n";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -75,6 +76,20 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-XXXXXXXXXX', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
         {/* Google AdSense verification */}
         <meta name="google-adsense-account" content="ca-pub-3481513283483187" />
         <link rel="manifest" href="/manifest.json" />
@@ -86,7 +101,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className={inter.className}>
-        {children}
+        <I18nProvider>
+          {children}
+        </I18nProvider>
         <Toaster />
         <AdSenseScript />
         <PushNotificationBanner />

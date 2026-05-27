@@ -4,67 +4,94 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Check, Sparkles, Zap, Rocket } from "lucide-react";
-
-const pricingPlans = [
-  {
-    name: "Starter",
-    icon: Sparkles,
-    price: "500,000",
-    period: "dan boshlab",
-    description: "Kichik biznes va startuplar uchun",
-    features: [
-      "Landing page / Portfolio",
-      "Responsive dizayn",
-      "SEO asoslari",
-      "Contact forma",
-      "1 oy bepul qo'llab-quvvatlash",
-      "Hosting va domen setup",
-    ],
-    popular: false,
-    gradient: "from-blue-500 to-cyan-500",
-  },
-  {
-    name: "Professional",
-    icon: Zap,
-    price: "1,500,000",
-    period: "dan boshlab",
-    description: "O'sib borayotgan bizneslar uchun",
-    features: [
-      "Multi-page web sayt",
-      "Admin panel",
-      "Telegram bot integratsiya",
-      "CRM integratsiya",
-      "To'lov sistemalari",
-      "SEO optimizatsiya",
-      "3 oy texnik qo'llab-quvvatlash",
-      "Analytics & Reporting",
-    ],
-    popular: true,
-    gradient: "from-purple-500 to-pink-500",
-  },
-  {
-    name: "Enterprise",
-    icon: Rocket,
-    price: "Shartnoma",
-    period: "asosida",
-    description: "Katta kompaniyalar va murakkab loyihalar",
-    features: [
-      "Custom web ilova",
-      "AI Chatbot integratsiya",
-      "Biznes avtomatlashtirish",
-      "API rivojlantirish",
-      "Ma'lumot tahlili",
-      "Cloud infrastructure",
-      "Maxsus dizayn va funksiyalar",
-      "24/7 texnik qo'llab-quvvatlash",
-      "Davomiy rivojlantirish",
-    ],
-    popular: false,
-    gradient: "from-orange-500 to-red-500",
-  },
-];
+import { useI18n } from "@/context/i18n";
 
 export default function PricingSection() {
+  const { lang, t } = useI18n();
+
+  const pricingPlans = [
+    {
+      name: t("pricing", "starter"),
+      icon: Sparkles,
+      price: "500,000",
+      period: lang === "uz" ? "dan boshlab" : (lang === "ru" ? "от" : "starting from"),
+      description: t("pricing", "starterDesc"),
+      features: [
+        "Landing page / Portfolio",
+        "Responsive dizayn",
+        "SEO asoslari",
+        "Contact forma",
+        "1 oy bepul qo'llab-quvvatlash",
+        "Hosting va domen setup",
+      ],
+      popular: false,
+      gradient: "from-blue-500 to-cyan-500",
+    },
+    {
+      name: t("pricing", "pro"),
+      icon: Zap,
+      price: "1,500,000",
+      period: lang === "uz" ? "dan boshlab" : (lang === "ru" ? "от" : "starting from"),
+      description: t("pricing", "proDesc"),
+      features: [
+        "Multi-page web sayt",
+        "Admin panel",
+        "Telegram bot integratsiya",
+        "CRM integratsiya",
+        "To'lov sistemalari",
+        "SEO optimizatsiya",
+        "3 oy texnik qo'llab-quvvatlash",
+        "Analytics & Reporting",
+      ],
+      popular: true,
+      gradient: "from-purple-500 to-pink-500",
+    },
+    {
+      name: t("pricing", "enterprise"),
+      icon: Rocket,
+      price: lang === "uz" ? "Shartnoma" : (lang === "ru" ? "Договорная" : "Contract"),
+      period: lang === "uz" ? "asosida" : (lang === "ru" ? "на основе" : "based"),
+      description: t("pricing", "enterpriseDesc"),
+      features: [
+        "Custom web ilova",
+        "AI Chatbot integratsiya",
+        "Biznes avtomatlashtirish",
+        "API rivojlantirish",
+        "Ma'lumot tahlili",
+        "Cloud infrastructure",
+        "Maxsus dizayn va funksiyalar",
+        "24/7 texnik qo'llab-quvvatlash",
+        "Davomiy rivojlantirish",
+      ],
+      popular: false,
+      gradient: "from-orange-500 to-red-500",
+    },
+  ];
+
+  const handleCheckout = async (planName: string, price: string) => {
+    if (planName === "Enterprise" || planName === "Корпоративный" || planName === "Contract") {
+      window.location.hash = "#contact";
+      return;
+    }
+    
+    try {
+      console.log(`Initiating checkout for plan: ${planName}`);
+      const response = await fetch("/api/payments/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planName, price }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        window.location.hash = "#contact";
+      }
+    } catch (e) {
+      window.location.hash = "#contact";
+    }
+  };
+
   return (
     <section id="pricing" className="py-24 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,10 +104,10 @@ export default function PricingSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Narxlar va <span className="text-gradient">Paketlar</span>
+            {t("pricing", "title")}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            O'z biznesingiz uchun mos paketni tanlang. Barcha narxlar boshlang'ich va loyiha hajmiga qarab o'zgarishi mumkin.
+            {t("pricing", "subtitle")}
           </p>
         </motion.div>
 
@@ -98,7 +125,7 @@ export default function PricingSection() {
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
                   <span className="bg-gradient-to-r from-primary-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
-                    ⭐ Mashhur
+                    ⭐ {t("pricing", "popular")}
                   </span>
                 </div>
               )}
@@ -124,7 +151,7 @@ export default function PricingSection() {
                   <div className="mb-6">
                     <div className="flex items-baseline">
                       <span className="text-4xl font-bold">{plan.price}</span>
-                      {plan.price !== "Shartnoma" && (
+                      {plan.price !== "Shartnoma" && plan.price !== "Договорная" && plan.price !== "Contract" && (
                         <span className="text-gray-500 ml-1">so'm</span>
                       )}
                     </div>
@@ -146,11 +173,9 @@ export default function PricingSection() {
                     variant={plan.popular ? "gradient" : "outline"}
                     className="w-full"
                     size="lg"
-                    asChild
+                    onClick={() => handleCheckout(plan.name, plan.price)}
                   >
-                    <a href="#contact">
-                      {plan.popular ? "Boshlaymiz" : "Batafsil"}
-                    </a>
+                    {t("pricing", "buyNow")}
                   </Button>
                 </CardContent>
               </Card>
