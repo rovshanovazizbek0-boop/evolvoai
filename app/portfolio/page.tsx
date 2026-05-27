@@ -2,27 +2,93 @@ import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+import BackToTop from "@/components/ui/back-to-top";
+import FloatingContact from "@/components/ui/floating-contact";
 import Link from "next/link";
 import Image from "next/image";
 import { ExternalLink, Github, Eye } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
-  title: "Portfolio - EvolvoAI",
-  description: "Bizning bajarilgan loyihalar portfoliosi",
+  title: "Portfolio - Bizning Loyihalarimiz | EvolvoAI",
+  description: "EvolvoAI tomonidan yaratilgan professional web saytlar, Telegram botlar va AI yechimlari. Mijozlarimiz uchun bajarilgan loyihalar.",
+  keywords: ["portfolio", "loyihalar", "web sayt misollari", "EvolvoAI ishi"],
+  openGraph: {
+    title: "Portfolio - EvolvoAI",
+    description: "Professional loyihalar va mijozlar yechimlari",
+    url: "https://evolvoai.uz/portfolio",
+  },
 };
 
 export default async function PortfolioPage() {
-  const projects = await prisma.project.findMany({
-    where: {
-      status: "COMPLETED",
-    },
-    orderBy: [
-      { featured: "desc" },
-      { createdAt: "desc" },
-    ],
-  });
+  let projects: any[] = [];
 
-  const categories = Array.from(new Set(projects.map(p => p.category)));
+  try {
+    projects = await prisma.project.findMany({
+      where: { status: "COMPLETED" },
+      orderBy: [
+        { featured: "desc" },
+        { createdAt: "desc" },
+      ],
+    });
+  } catch (error) {
+    console.error("Failed to fetch projects:", error);
+    // Fallback mock data
+    projects = [
+      {
+        id: "1",
+        title: "E-Commerce Platform",
+        slug: "e-commerce-platform",
+        description: "To'liq funksional onlayn do'kon platformasi — mahsulot katalogi, savatcha va to'lov tizimi bilan.",
+        category: "Web Development",
+        tags: ["Next.js", "Stripe", "PostgreSQL"],
+        imageUrl: "https://images.unsplash.com/photo-1557821552-17105176677c?w=800",
+        demoUrl: "#",
+        githubUrl: null,
+        technologies: ["React", "Node.js", "Prisma"],
+        featured: true,
+        status: "COMPLETED",
+        views: 150,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: "2",
+        title: "AI Chatbot Integration",
+        slug: "ai-chatbot",
+        description: "Mijozlarni qo'llab-quvvatlash uchun GPT-4 asosida ishlaydi an aqlli chatbot.",
+        category: "AI",
+        tags: ["OpenAI", "Python", "FastAPI"],
+        imageUrl: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800",
+        demoUrl: "#",
+        githubUrl: null,
+        technologies: ["GPT-4", "LangChain", "FastAPI"],
+        featured: true,
+        status: "COMPLETED",
+        views: 200,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: "3",
+        title: "Telegram Bot for Business",
+        slug: "telegram-business-bot",
+        description: "Biznes uchun Telegram bot — buyurtma qabul qilish, CRM integratsiya va analitika.",
+        category: "Telegram Bot",
+        tags: ["Python", "Aiogram", "PostgreSQL"],
+        imageUrl: "https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800",
+        demoUrl: "#",
+        githubUrl: null,
+        technologies: ["Python", "Aiogram", "Redis"],
+        featured: false,
+        status: "COMPLETED",
+        views: 120,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+  }
 
   return (
     <main className="min-h-screen" style={{ background: "#0A0E27" }}>
@@ -136,6 +202,8 @@ export default async function PortfolioPage() {
       </div>
 
       <Footer />
+      <BackToTop />
+      <FloatingContact />
     </main>
   );
 }

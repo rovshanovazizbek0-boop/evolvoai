@@ -18,12 +18,12 @@ export default function Navbar({ forceWhite = false }: NavbarProps = {}) {
 
   const navItems = [
     { name: t("nav", "home"), href: "/" },
-    { name: t("nav", "services"), href: "/#services" },
-    { name: t("nav", "pricing"), href: "/#pricing" },
-    { name: t("nav", "portfolio"), href: "/#portfolio" },
+    { name: t("nav", "services"), href: "/services" },
+    { name: t("nav", "pricing"), href: "/pricing" },
+    { name: t("nav", "portfolio"), href: "/portfolio" },
     { name: t("nav", "blog"), href: "/blog" },
-    { name: t("nav", "faq"), href: "/#faq" },
-    { name: t("nav", "contact"), href: "/#contact" },
+    { name: t("nav", "faq"), href: "/faq" },
+    { name: t("nav", "contact"), href: "/contact" },
   ];
 
   useEffect(() => {
