@@ -6,9 +6,9 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🔐 Admin foydalanuvchi yaratilmoqda...\n");
 
-  const email = "admin@evolvoai.uz";
-  const password = "GisoBot#201415!"; // O'zingizni parolingizni kiriting!
-  const name = "Admin";
+  const email = process.env.ADMIN_EMAIL || "admin@evolvoai.uz";
+  const password = process.env.ADMIN_PASSWORD || "GisoBot#201415!"; // O'zingizni parolingizni kiriting!
+  const name = process.env.ADMIN_NAME || "Admin";
 
   // Check if user exists
   const existingUser = await prisma.user.findUnique({
